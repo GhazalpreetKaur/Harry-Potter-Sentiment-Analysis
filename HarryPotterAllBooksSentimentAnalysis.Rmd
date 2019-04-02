@@ -1,0 +1,317 @@
+---
+title: "HarryPotterSA"
+author: "Ghazalpreet Kaur"
+date: "October 15, 2018"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#install.packages("memoise")
+library(memoise)
+
+#install.packages("curl")
+library(curl)
+
+#install.packages("withr")
+library(withr)
+
+library(harrypotter)
+library(tidyverse)
+library(stringr)
+library(tidytext)
+library(harrypotter)
+
+#install.packages("sentimentr")
+library(sentimentr)
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+?tibble
+?length
+?unnest_tokens
+tibble(text= philosophers_stone)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+ps_book1 <- tibble(chapter= 1: length(philosophers_stone),
+                text=philosophers_stone)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+View(ps_book1)
+?get_sentiments
+
+book_1 <- ps_book1 %>%
+  group_by(chapter)%>%
+  mutate(sentence_num1 = 1:n(),
+         index = round(sentence_num1/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter,index)%>%
+  summarize(sentiment=sum(score, na.rm=TRUE))%>%
+  arrange(desc(sentiment))
+  
+#visualilzation
+ggplot(book_1, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill=sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand=c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  labs(x="Chapter Progression", y="Chapter")+
+  ggtitle("Sentiment of Harry Potter and the Philosopher's Stone", subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+```
+```{r}
+tibble(text= chamber_of_secrets)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+chamber_of_secrets_book<- tibble(chapter= 1: length(chamber_of_secrets),
+                text=chamber_of_secrets)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+View(chamber_of_secrets_book)
+?get_sentiments
+
+book_2 <- chamber_of_secrets_book %>%
+  group_by(chapter)%>%
+  mutate(sentence_num1 = 1:n(),
+         index = round(sentence_num1/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter,index)%>%
+  summarize(sentiment=sum(score, na.rm=TRUE))%>%
+  arrange(desc(sentiment))
+  
+#visualilzation
+ggplot(book_2, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill=sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand=c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  labs(x="Chapter Progression", y="Chapter")+
+  ggtitle("Sentiment of Harry Potter and the Chamber of Secrets", subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+```
+```{r}
+tibble(text= prisoner_of_azkaban)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+prisoner_of_azkaban_book<- tibble(chapter= 1: length(prisoner_of_azkaban),
+                text=prisoner_of_azkaban)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+View(prisoner_of_azkaban_book)
+?get_sentiments
+
+book_3 <- prisoner_of_azkaban_book %>%
+  group_by(chapter)%>%
+  mutate(sentence_num1 = 1:n(),
+         index = round(sentence_num1/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter,index)%>%
+  summarize(sentiment=sum(score, na.rm=TRUE))%>%
+  arrange(desc(sentiment))
+
+#visualilzation
+ggplot(book_3, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill=sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand=c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  labs(x="Chapter Progression", y="Chapter")+
+  ggtitle("Sentiment of Harry Potter and the Prisoner of Azkaban", subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+```
+```{r}
+tibble(text= goblet_of_fire)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+goblet_of_fire_book<- tibble(chapter= 1: length(goblet_of_fire),
+                text=goblet_of_fire)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+View(goblet_of_fire_book)
+?get_sentiments
+
+book_4 <- goblet_of_fire_book %>%
+  group_by(chapter)%>%
+  mutate(sentence_num1 = 1:n(),
+         index = round(sentence_num1/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter,index)%>%
+  summarize(sentiment=sum(score, na.rm=TRUE))%>%
+  arrange(desc(sentiment))
+  
+#visualilzation
+ggplot(book_4, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill=sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand=c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  labs(x="Chapter Progression", y="Chapter")+
+  ggtitle("Sentiment of Harry Potter and the Goblet of Fire", subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+```
+```{r}
+tibble(text= order_of_the_phoenix)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+order_of_the_phoenix_book<- tibble(chapter= 1: length(order_of_the_phoenix),
+                text=order_of_the_phoenix)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+View(order_of_the_phoenix_book)
+?get_sentiments
+
+book_5 <- order_of_the_phoenix_book %>%
+  group_by(chapter)%>%
+  mutate(sentence_num1 = 1:n(),
+         index = round(sentence_num1/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter,index)%>%
+  summarize(sentiment=sum(score, na.rm=TRUE))%>%
+  arrange(desc(sentiment))
+  
+#visualilzation
+ggplot(book_5, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill=sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand=c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  labs(x="Chapter Progression", y="Chapter")+
+  ggtitle("Sentiment of Harry Potter and the Order of the Phoenix", subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+```
+```{r}
+tibble(text= half_blood_prince)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+half_blood_prince_book<- tibble(chapter= 1: length(half_blood_prince),
+                text=half_blood_prince)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+View(half_blood_prince_book)
+?get_sentiments
+
+book_6 <- half_blood_prince_book %>%
+  group_by(chapter)%>%
+  mutate(sentence_num1 = 1:n(),
+         index = round(sentence_num1/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter,index)%>%
+  summarize(sentiment=sum(score, na.rm=TRUE))%>%
+  arrange(desc(sentiment))
+  
+#visualilzation
+ggplot(book_6, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill=sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand=c(0,0))+
+  scale_y_discrete(expand = c(0,0))+
+  labs(x="Chapter Progression", y="Chapter")+
+  ggtitle("Sentiment of Harry Potter and the Half Blood Prince", subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+
+```
+```{r cars}
+
+#tokenize text into sentences
+
+#sentiment Analysis with larger Units.
+#tokenize the sentence
+
+tibble(text=deathly_hallows)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+?tibble
+
+#lets go ahead and break up the philosopher's stone text by chapter and sentence
+
+ps_sentences<- tibble(chapter=1: length(deathly_hallows),
+                     text=deathly_hallows)%>%
+  unnest_tokens(sentence, text, token = "sentences")
+
+#This will allow us to assess the net sentiment
+#by chapter and by sentence. First, we need to track the sentence 
+#numbers and then I create an index that tracks the progress 
+#through each chapter. I then unnest the sentences by words. 
+#This gives us a tibble that has individual words by sentence 
+#within each chapter.
+
+# Join "afinn" lexicon and compute the net sentiment score
+
+book_sent <- ps_sentences %>%
+  group_by(chapter)%>%
+  mutate(sentence_num= 1:n(),
+         index=round(sentence_num/n(),2))%>%
+  unnest_tokens(word, sentence)%>%
+  inner_join(get_sentiments("afinn"))%>%
+  group_by(chapter, index)%>%
+  summarize(sentiment= sum(score, na.rm = TRUE))%>%
+  arrange(desc(sentiment))
+
+  
+View(book_sent)
+
+#Now, as before, I join the AFINN lexicon and compute the net sentiment score for each chapter.The AFINN lexicon assigns words with a score that runs between -5 and 5, with negative scores indicating negative sentiment and positive scores indicating positive sentiment.
+
+#Visualize using ggplot
+
+ggplot(book_sent, aes(index, factor(chapter, levels = sort(unique(chapter), decreasing = TRUE)), fill = sentiment))+
+  geom_tile(color = "white")+
+  scale_fill_gradient2()+
+  scale_x_continuous(labels = scales::percent, expand = c(0,0))+
+  scale_y_discrete(expand=c(0,0))+
+  labs(x="Chapter Progression", y = "Chapter")+
+  ggtitle("Sentiment of Harry potter and the Deathly Hallows",
+          subtitle = "Summary of the net sentiment score as you progress through each chapter")+
+  theme_minimal()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.position = "top")
+
+
+```
+
+
+
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
